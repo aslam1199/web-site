@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Files and Text</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Upload Files and Text</h1>
+        <form method="POST" enctype="multipart/form-data">
+            <div class="textarea-container">
+                <textarea name="text" placeholder="Write a message..." rows="4"></textarea>
+                <button type="button" class="emoji-btn">😊</button>
+                <div id="emoji-picker" class="emoji-picker"></div>
+            </div>
+
+            <label for="file-upload" class="upload-btn">Choose Files</label>
+            <input type="file" name="files" id="file-upload" multiple>
+            <button type="submit">Post</button>
+        </form>
+        <a href="/logout" class="logout-btn">Logout</a>
+
+        <h2>Posts</h2>
+        <div class="gallery">
+            {% for post in posts %}
+            <div class="post">
+                <p class="uploader">Uploaded by: {{ post.name }}</p>
+                {% if post.text %}
+                <p class="message">{{ post.text }}</p>
+                {% endif %}
+                <p class="timestamp">Posted on: {{ post.timestamp }}</p>
+                {% for file in post.files %}
+                {% if file.endswith(('.mp4', '.webm')) %}
+                <video controls>
+                    <source src="{{ file }}" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                {% else %}
+                <img src="{{ file }}" alt="Uploaded Image">
+                {% endif %}
+                {% endfor %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <script>
+        // Emoji Picker Toggle
+        const emojiBtn = document.querySelector('.emoji-btn');
+        const emojiPicker = document.getElementById('emoji-picker');
+        const textArea = document.querySelector('textarea');
+
+        // Show/Hide Emoji Picker
+        emojiBtn.addEventListener('click', () => {
+            emojiPicker.style.display = emojiPicker.style.display === 'block' ? 'none' : 'block';
+        });
+
+        // Insert Emoji into Text Area
+        const emojis = ['😀', '😁', '😂', '🤣', '😃', '😄', '😅', '😆', '😇', '😈', '👹', '👺', '🙃', '🙂', '😉', '😊', '😋', '😎', '😍', '😘', '🥰', '😚', '😙', '😗', '😳', '🥺', '😦', '😧', '😨', '😰', '😢', '😭', '😵', '😡', '😠', '😤', '😥', '😓', '😩', '😫', '😕', '😒', '😔', '🤔', '🤐', '🤨', '😬', '🤧', '😷', '🤒', '🤑', '🤠', '😇', '🤡', '👽', '👾', '🛸', '🚀', '🏴‍☠️', '⚡', '🏁', '🌟', '💥', '🔥', '💣', '🎉', '🎶', '🎤', '🎧', '💃', '🕺', '🎩', '👒', '👑', '💍', '💌', '🎀', '🎁', '🎀', '🎃', '🧨', '🌈', '🌟', '⭐', '💫', '⚽', '🏀', '🎾', '🏐', '🏉', '🏈', '🎱', '🎯', '⛳', '🏅', '🥇', '🥈', '🥉', '🏆', '🎮', '🕹️', '🎲', '🔮', '🎯', '🎸', '🎹', '🪕', '🎷', '🎻', '🎺', '🎸', '🎻', '🎼', '🎶', '🎤', '🧑‍🎤', '🧑‍⚖️', '🧑‍🍳', '🧑‍🎨', '🧑‍🔧'];
+
+        emojis.forEach(emoji => {
+            const emojiElement = document.createElement('span');
+            emojiElement.classList.add('emoji');
+            emojiElement.textContent = emoji;
+            emojiElement.addEventListener('click', () => {
+                textArea.value += emoji;
+                emojiPicker.style.display = 'none';  // Hide the picker after selecting
+            });
+            emojiPicker.appendChild(emojiElement);
+        });
+    </script>
+</body>
+</html>
